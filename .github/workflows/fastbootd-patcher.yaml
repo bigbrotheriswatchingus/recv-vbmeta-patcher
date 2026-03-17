@@ -1,32 +1,31 @@
 name: Patch recovery and vbmeta images
-
 on:
   workflow_dispatch:
-
+    inputs:
+      recovery_url:
+        description: 'Direct URL to recovery.img.lz4'
+        required: true
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
     - name: Checkout
       uses: actions/checkout@v4
-
     - name: Install deps
       run: |
         sudo apt install -y lz4 tar openssl python3
-
+    - name: Download recovery
+      run: |
+        curl -L "${{ github.event.inputs.recovery_url }}" -o recovery.img.lz4
     - name: Patch vbmeta
       run: |
         ./patch-vbmeta.sh
-
     - name: Patch recovery
       run: |
         ./patch-recovery.sh
-
     - name: Repack files into .tar.md5
       run: |
         ./pack-odin.sh
-
     - name: Upload files
       uses: actions/upload-artifact@v4
       with:
