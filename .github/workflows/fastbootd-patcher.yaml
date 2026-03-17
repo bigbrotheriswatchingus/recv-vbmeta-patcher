@@ -17,8 +17,10 @@ jobs:
     - name: Download recovery
       run: |
         curl -L "${{ github.event.inputs.recovery_url }}" -o recovery.img.lz4
+        lz4 -d recovery.img.lz4 recovery.img
     - name: Patch vbmeta
       run: |
+        lz4 -d vbmeta.img.lz4 vbmeta.img
         ./patch-vbmeta.sh
     - name: Patch recovery
       run: |
